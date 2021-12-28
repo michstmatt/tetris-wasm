@@ -4,9 +4,9 @@
 
 int main(int arc, char** argv)
 {
-    Board b;
+    Board b = DEFAULT_BOARD;
     Cell c;
     Color col;
-    printf("Hello");
+    printf("%d %d %d", b.Columns, b.Rows, b.ViewableRows);
     return 0;
 }
