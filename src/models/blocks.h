@@ -106,7 +106,28 @@ Block IBlock()
 
 void RotateBlock(Block* block)
 {
+    for(int row = 0; row < block->Height; row++)
+    {
+        for(int col = 0; col< block->Width; col++)
+        {
+            int rRow = row * block->Width;
+            int p1 = rRow + col;
 
+            printf("%d %d %d %d", row, col, rRow, p1);
+
+            int p2 = (block->Width - col) + ((block->Height - row) * block->Width);
+            
+            int tmp = block->Cells[p1];
+            block->Cells[p1] = block->Cells[p2];
+            block->Cells[p2] = tmp;
+        }
+    }
+    int ori = block->Orientation + 1;
+    if (ori > 3)
+    {
+        ori = 0;
+    }
+    block->Orientation = ori;
 }
 
 #endif
