@@ -1,19 +1,18 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-typedef struct
-{
-    short R;
-    short G;
-    short B;
-} Color;
+#define RED 255000000
+#define BLUE 000000255
+#define GREEN 000255000
+#define YELLOW 255255000
+#define ORANGE 255165000
+#define PURPLE 255000255
+#define LIGHT_BLUE 112163204
+#define BLACK 0
 
-#define RED {255, 0, 0}
-#define BLUE {0, 0, 255}
-#define GREEN {0, 255, 0}
-#define YELLOW {255, 255, 0}
-#define ORANGE {255, 165, 0}
-#define PURPLE {255, 0, 255}
-#define LIGHT_BLUE {112, 163, 204}
+int ClearColor()
+{
+    return BLACK;
+}
 
 #endif
