@@ -50,7 +50,7 @@ function draw(array) {
 
 
     prog.instance.exports.initGame();
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10000; i++) {
 
 
         if(move != 0 || rotate == 1 || down == 1)
@@ -66,7 +66,7 @@ function draw(array) {
 
         draw(array);
 
-        await sleep(100);
+        await sleep(500);
         console.log(i);
 
     }

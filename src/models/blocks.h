@@ -20,6 +20,7 @@ typedef struct
     int Row;
     int Col;
     int *Cells;
+    int UnmovedTime;
 } Block;
 
 Block Zblock()
