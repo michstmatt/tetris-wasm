@@ -1,6 +1,6 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
-let CELL_SIZE = 10;
+let CELL_SIZE = 20;
 
 let move = 0;
 let rotate = 0;
@@ -26,19 +26,33 @@ function keyDown(event) {
     }
 }
 
+function drawCell(ctx, col, row, rgb) {
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+    ctx.stroke();
+    ctx.fillStyle = "#" + rgb;
+    ctx.fillRect(col * CELL_SIZE + 1, row * CELL_SIZE + 1, CELL_SIZE - 2, CELL_SIZE - 2)
+    ctx.stroke();
+}
+
 function draw(array) {
     ctx.beginPath();
 
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = "#FFFFFF";
     ctx.fillRect(0, 0, 400, 400);
+    ctx.stroke();
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(2, 2, 396, 396);
     ctx.stroke();
 
     for (let row = 0; row < 40; row++) {
         for (let col = 0; col < 10; col++) {
             let idx = row * 10 + col;
-            ctx.fillStyle = "#FF0000";
             if (array[idx] > 0) {
-                ctx.fillRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                let rgb = array[idx].toString(16).toUpperCase();
+                rgb = rgb.padStart(8 - rgb.length, '0');
+                drawCell(ctx, col, row, rgb);
+                console.log(rgb);
             }
         }
     }
@@ -48,25 +62,21 @@ function draw(array) {
 (async () => {
     const prog = await WebAssembly.instantiateStreaming(fetch('tetris.wasm'), {});
 
-
-    prog.instance.exports.initGame();
+    var time = +Date.now();
+    prog.instance.exports.initGame(time);
     for (let i = 0; i < 10000; i++) {
 
-
-        if(move != 0 || rotate == 1 || down == 1)
-        {
-            prog.instance.exports.moveCurrentBlock(move, down, rotate);
-            move = 0;
-            rotate = 0;
-            down = 0;
-        }
-        let row = prog.instance.exports.updateGame();
-        let ptr = prog.instance.exports.getGame();
+        time = +Date.now();
+        let ptr = prog.instance.exports.updateGame(time, move, down, rotate);
         const array = new Int32Array(prog.instance.exports.memory.buffer, ptr, 400);
 
         draw(array);
+        move = 0;
+        rotate = 0;
+        down = 0;
 
-        await sleep(500);
+
+        await sleep(50);
         console.log(i);
 
     }

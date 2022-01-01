@@ -20,7 +20,7 @@ typedef struct
     int Row;
     int Col;
     int *Cells;
-    int UnmovedTime;
+    long UnmovedTime;
 } Block;
 
 Block Zblock()
@@ -56,35 +56,31 @@ Block Tblock()
     return b;
 }
 
-Block LBlock()
+Block Lblock()
 {
-    Block b = {4, 4, BLUE, UP, 0, 0};
+    Block b = {4, 4, ORANGE, UP, 0, 0};
     b.Cells = (int*)calloc(b.Width*b.Height, sizeof(int));
     b.Cells[0] = 1;
     b.Cells[4] = 1;
     b.Cells[8] = 1;
-    b.Cells[12] = 1;
-    b.Cells[13] = 1;
-    b.Cells[14] = 1;
+    b.Cells[9] = 1;
     return b;
 }
 
-Block JBlock()
+Block Jblock()
 {
-    Block b = {4, 4, ORANGE, UP, 0, 0};
+    Block b = {4, 4, BLUE, UP, 0, 0};
     b.Cells = (int*)calloc(b.Width*b.Height, sizeof(int));
     b.Cells[3] = 1;
     b.Cells[7] = 1;
     b.Cells[11] = 1;
-    b.Cells[15] = 1;
-    b.Cells[14] = 1;
-    b.Cells[13] = 1;
+    b.Cells[10] = 1;
     return b;
 }
 
-Block SQBlock()
+Block SQblock()
 {
-    Block b = {4, 4, ORANGE, UP, 0, 0};
+    Block b = {4, 4, YELLOW, UP, 0, 0};
     b.Cells = (int*)calloc(b.Width*b.Height, sizeof(int));
     b.Cells[5] = 1;
     b.Cells[6] = 1;
@@ -93,9 +89,9 @@ Block SQBlock()
     return b;
 }
 
-Block IBlock()
+Block Iblock()
 {
-    Block b = {4, 4, ORANGE, UP, 0, 0};
+    Block b = {4, 4, LIGHT_BLUE, UP, 0, 0};
     b.Cells = (int*)calloc(b.Width*b.Height, sizeof(int));
     b.Cells[1] = 1;
     b.Cells[5] = 1;
@@ -117,6 +113,40 @@ void drawBlock(Block* block)
     }
     printf("\n");
 }*/
+
+void randBlock(Block* block)
+{
+    int idx = rand() % 7;
+    switch (idx)
+    {
+    case 0:
+        (*block) = Zblock();
+        break;
+    case 1:
+        (*block) = Sblock();
+        break;
+    case 2:
+        (*block) = Tblock();
+        break;
+    case 3:
+        (*block) = Lblock();
+        break;
+    case 4:
+        (*block) = Jblock();
+        break;
+    case 5:
+        (*block) = SQblock();
+        break;
+    case 6:
+        (*block) = Iblock();
+        break;
+    default:
+        (*block) = Zblock();
+        break;
+    }
+    block->Row = 0;
+    block->Col = 0;
+}
 
 void transpose(Block* block)
 {

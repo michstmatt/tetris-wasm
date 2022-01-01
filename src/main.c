@@ -5,55 +5,63 @@
 Board board;
 Block block;
 
-int initGame()
+long lastUpdate;
+int blockUpdateDelta;
+
+int initGame(long time)
 {
     board = (Board)DEFAULT_BOARD;
-    block = IBlock();
-    block.Col = 0;
-    block.Row = 0;
+    srand(time);
+    randBlock(&block);
+    lastUpdate = time;
+    blockUpdateDelta = 500;
     return 0;
 }
 
-int *getGame()
+int *updateGame(long time, int moveRight, int moveDown, int rotate)
 {
-    return (int *)board.Cells;
-}
+    Board *boardPtr = &board;
+    Block *blockPtr = &block;
+    clearBlock(boardPtr, blockPtr);
 
-int updateGame()
-{
-    clearBlock(&board, &block);
-    if (blockCanMove(&board, &block, 1, 0))
-    {
-        MoveBlock(&block, 1, 0);
-    }
-    else
-    {
-        block.UnmovedTime += 1;
-    }
-    updateBlock(&board, &block);
+    int didMove = 0;
+    int delta = time - lastUpdate;
 
-    if(block.UnmovedTime == 2)
+    if ((moveRight || moveDown) && blockCanMove(boardPtr, blockPtr, moveDown, moveRight))
     {
-        checkRows(&board);
-        block = IBlock();
+        didMove = 1;
+        MoveBlock(blockPtr, moveDown, moveRight);
     }
 
-    return block.Row;
-}
-
-void moveCurrentBlock(int right, int down, int rotate)
-{
-    clearBlock(&board, &block);
-    if (down < 0)
-    {
-        down = 0;
-    }
-    if (blockCanMove(&board, &block, right, down))
-    {
-        MoveBlock(&block, down, right);
-    }
     if (rotate)
     {
-        RotateBlock(&block);
+        RotateBlock(blockPtr);
     }
+
+    if (delta > blockUpdateDelta)
+    {
+        lastUpdate = time;
+        if (blockCanMove(boardPtr, blockPtr, 1, 0))
+        {
+            didMove = 1;
+            MoveBlock(blockPtr, 1, 0);
+        }
+
+        if (!didMove)
+        {
+            blockPtr->UnmovedTime += delta;
+            if (blockPtr->UnmovedTime > 1000)
+            {
+                // new block
+                updateBlock(boardPtr, blockPtr);
+                checkRows(boardPtr);
+                randBlock(blockPtr);
+            }
+        }
+    }
+
+    updateBlock(boardPtr, blockPtr);
+
+    return (int *)(boardPtr->Cells);
+    //return (int *)(board.Cells);
 }
