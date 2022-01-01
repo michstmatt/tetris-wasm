@@ -38,25 +38,26 @@ function drawCell(ctx, col, row, rgb) {
 function draw(array) {
     ctx.beginPath();
 
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, 400, 400);
     ctx.stroke();
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(2, 2, 396, 396);
-    ctx.stroke();
 
-    for (let row = 0; row < 40; row++) {
+    for (let row = 4; row < 24; row++) {
         for (let col = 0; col < 10; col++) {
             let idx = row * 10 + col;
             if (array[idx] > 0) {
                 let rgb = array[idx].toString(16).toUpperCase();
-                rgb = rgb.padStart(8 - rgb.length, '0');
-                drawCell(ctx, col, row, rgb);
-                console.log(rgb);
+                rgb = rgb.padStart(6, '0');
+                drawCell(ctx, col, row-4, rgb);
             }
         }
     }
     ctx.stroke();
+}
+
+function setScore(score)
+{
+    document.getElementById("score").innerText = "Rows Cleared: " + score;
 }
 
 (async () => {
@@ -68,7 +69,21 @@ function draw(array) {
 
         time = +Date.now();
         let ptr = prog.instance.exports.updateGame(time, move, down, rotate);
-        const array = new Int32Array(prog.instance.exports.memory.buffer, ptr, 400);
+        let scorePtr = prog.instance.exports.getScore();
+
+        const scoreArr = new Int32Array(prog.instance.exports.memory.buffer, scorePtr, 3);
+        let gameOver = scoreArr[2];
+        if(gameOver == 1)
+        {
+            setScore("GAME OVER");
+        }
+        else
+        {
+            setScore(scoreArr[0]);
+        }
+
+
+        const array = new Int32Array(prog.instance.exports.memory.buffer, ptr, 240);
 
         draw(array);
         move = 0;

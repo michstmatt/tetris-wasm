@@ -7,6 +7,7 @@ Block block;
 
 long lastUpdate;
 int blockUpdateDelta;
+int score[3];
 
 int initGame(long time)
 {
@@ -18,11 +19,22 @@ int initGame(long time)
     return 0;
 }
 
+int* getScore()
+{
+    return score;
+}
+
 int *updateGame(long time, int moveRight, int moveDown, int rotate)
 {
     Board *boardPtr = &board;
     Block *blockPtr = &block;
     clearBlock(boardPtr, blockPtr);
+
+    if(checkGameOver(boardPtr))
+    {
+        score[2] = 1;
+        return (int *)(boardPtr->Cells);
+    }
 
     int didMove = 0;
     int delta = time - lastUpdate;
@@ -54,7 +66,7 @@ int *updateGame(long time, int moveRight, int moveDown, int rotate)
             {
                 // new block
                 updateBlock(boardPtr, blockPtr);
-                checkRows(boardPtr);
+                score[0] += checkRows(boardPtr);
                 randBlock(blockPtr);
             }
         }

@@ -4,7 +4,7 @@
 #include "color.h"
 #define VIEWABLE_ROWS 20
 #define COLUMNS 10
-#define ROWS 40
+#define ROWS 24
 
 typedef struct
 {
@@ -58,9 +58,9 @@ int blockCanMove(Board *board, Block *block, int mY, int mX)
             int pos = row * block->Width + col;
             if (block->Cells[pos] == 0)
                 continue;
-            int y = block->Row + row + mY + board->ViewableRows;
+            int y = block->Row + row + mY;
             int x = block->Col + col + mX;
-            if (!(x >= 0 && x < board->Columns && y >= 0 && y < board->Rows && board->Cells[y - board->ViewableRows][x] == 0))
+            if (!(x >= 0 && x < board->Columns && y >= 0 && y < board->Rows && board->Cells[y][x] == 0))
             {
                 allowed = 0;
             }
@@ -115,8 +115,9 @@ void updateBlock(Board *board, Block *block)
     }
 }
 
-void checkRows(Board *board)
+int checkRows(Board *board)
 {
+    int cleared = 0;
     for (int row = 0; row < board->Rows; row++)
     {
         int sum = 0;
@@ -126,6 +127,7 @@ void checkRows(Board *board)
         }
         if (sum == board->Columns)
         {
+            cleared ++;
             // clear row
             // move row down
             for(int mRow = row; row >0; row --)
@@ -137,5 +139,21 @@ void checkRows(Board *board)
             }
         }
     }
+    return cleared;
+}
+int checkGameOver(Board* board)
+{
+    int hiddenRows = board->Rows - board->ViewableRows;
+    for (int row = 0; row < hiddenRows; row++)
+    {
+        for (int col = 0; col < board->Columns; col++)
+        {
+            if(board->Cells[row][col] > 0)
+            {
+                return 1;
+            }
+        }
+    }
+    return  0;
 }
 #endif
