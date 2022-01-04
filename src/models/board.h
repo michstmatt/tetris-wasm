@@ -2,6 +2,7 @@
 #define BOARD_H
 #include "blocks.h"
 #include "color.h"
+#include <string.h>
 #define VIEWABLE_ROWS 20
 #define COLUMNS 10
 #define ROWS 24
@@ -68,6 +69,7 @@ int blockCanMove(Board *board, Block *block, int mY, int mX)
     return allowed;
 }
 
+
 void updateBlockInBounds(Board *board, Block *block)
 {
     for (int row = 0; row < block->Height; row++)
@@ -95,6 +97,24 @@ void updateBlockInBounds(Board *board, Block *block)
             }
         }
     }
+}
+
+void TryRotateBlock(Board *board, Block *block)
+{
+    int numCells = block->Width * block->Height;
+    int backup[numCells];
+    memcpy(backup, block->Cells, numCells * sizeof(int));
+
+    RotateBlock(block);
+
+    int okToRotate = blockCanMove(board, block, 0, 0);
+
+    // block cannot rotate without collision
+    if(!okToRotate)
+    {
+        memcpy(block->Cells, backup, numCells * sizeof(int));
+    }
+
 }
 
 void updateBlock(Board *board, Block *block)

@@ -47,7 +47,8 @@ int *updateGame(long time, int moveRight, int moveDown, int rotate)
 
     if (rotate)
     {
-        RotateBlock(blockPtr);
+        TryRotateBlock(boardPtr, blockPtr);
+        updateBlockInBounds(boardPtr, blockPtr);
     }
 
     if (delta > blockUpdateDelta)

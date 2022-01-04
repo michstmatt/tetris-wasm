@@ -60,10 +60,10 @@ Block Lblock()
 {
     Block b = {4, 4, ORANGE, UP, 0, 0};
     b.Cells = (int*)calloc(b.Width*b.Height, sizeof(int));
-    b.Cells[0] = 1;
-    b.Cells[4] = 1;
-    b.Cells[8] = 1;
+    b.Cells[1] = 1;
+    b.Cells[5] = 1;
     b.Cells[9] = 1;
+    b.Cells[10] = 1;
     return b;
 }
 
@@ -71,10 +71,10 @@ Block Jblock()
 {
     Block b = {4, 4, BLUE, UP, 0, 0};
     b.Cells = (int*)calloc(b.Width*b.Height, sizeof(int));
-    b.Cells[3] = 1;
-    b.Cells[7] = 1;
-    b.Cells[11] = 1;
+    b.Cells[2] = 1;
+    b.Cells[6] = 1;
     b.Cells[10] = 1;
+    b.Cells[9] = 1;
     return b;
 }
 

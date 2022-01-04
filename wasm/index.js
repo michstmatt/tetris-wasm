@@ -60,7 +60,12 @@ function setScore(score)
     document.getElementById("score").innerText = "Rows Cleared: " + score;
 }
 
-(async () => {
+function restart()
+{
+    run();
+}
+
+async function run () {
     const prog = await WebAssembly.instantiateStreaming(fetch('tetris.wasm'), {});
 
     var time = +Date.now();
@@ -95,4 +100,4 @@ function setScore(score)
         console.log(i);
 
     }
-})();
+};
