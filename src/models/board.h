@@ -69,7 +69,6 @@ int blockCanMove(Board *board, Block *block, int mY, int mX)
     return allowed;
 }
 
-
 void updateBlockInBounds(Board *board, Block *block)
 {
     for (int row = 0; row < block->Height; row++)
@@ -110,11 +109,10 @@ void TryRotateBlock(Board *board, Block *block)
     int okToRotate = blockCanMove(board, block, 0, 0);
 
     // block cannot rotate without collision
-    if(!okToRotate)
+    if (!okToRotate)
     {
         memcpy(block->Cells, backup, numCells * sizeof(int));
     }
-
 }
 
 void updateBlock(Board *board, Block *block)
@@ -147,10 +145,10 @@ int checkRows(Board *board)
         }
         if (sum == board->Columns)
         {
-            cleared ++;
+            cleared++;
             // clear row
             // move row down
-            for(int mRow = row; row >0; row --)
+            for (int mRow = row; row > 0; row--)
             {
                 for (int col = 0; col < board->Columns; col++)
                 {
@@ -161,19 +159,19 @@ int checkRows(Board *board)
     }
     return cleared;
 }
-int checkGameOver(Board* board)
+int checkGameOver(Board *board)
 {
     int hiddenRows = board->Rows - board->ViewableRows;
     for (int row = 0; row < hiddenRows; row++)
     {
         for (int col = 0; col < board->Columns; col++)
         {
-            if(board->Cells[row][col] > 0)
+            if (board->Cells[row][col] > 0)
             {
                 return 1;
             }
         }
     }
-    return  0;
+    return 0;
 }
 #endif

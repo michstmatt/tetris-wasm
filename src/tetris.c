@@ -1,9 +1,12 @@
 #include "./models/board.h"
 #include "./models/blocks.h"
+#include "./models/queue.h"
 #include <stdlib.h>
 
 Board board;
 Block block;
+BlockQueue blockQueue;
+Board queueBoard;
 
 long lastUpdate;
 int blockUpdateDelta;
@@ -12,16 +15,56 @@ int score[3];
 int initGame(long time)
 {
     board = (Board)DEFAULT_BOARD;
+    queueBoard = (Board){3, 20, 20};
+    blockQueue.Length = QUEUE_LEN;
     srand(time);
-    randBlock(&block);
+    SeedQueue(&blockQueue);
+    for (int i = 0; i < blockQueue.Length; i++)
+    {
+        Block *blockPtr = &(blockQueue.Blocks[i]);
+        blockQueue.Blocks[i].Row = 5 * i;
+        updateBlock(&queueBoard, blockPtr);
+    }
+    block = QueuePopPush(&blockQueue);
     lastUpdate = time;
     blockUpdateDelta = 500;
     return 0;
 }
 
-int* getScore()
+int *getQueue()
+{
+    return (int *)queueBoard.Cells;
+}
+
+int *getScore()
 {
     return score;
+}
+
+void blockSet()
+{
+    // new block
+    updateBlock(&board, &block);
+    score[0] += checkRows(&board);
+    block = QueuePopPush(&blockQueue);
+    for (int r = 0; r < queueBoard.Rows; r++)
+        for (int c = 0; c < queueBoard.Columns; c++)
+        {
+            queueBoard.Cells[r][c] = 0;
+        }
+    int realIndex;
+    for (int i = 0; i < blockQueue.Length; i++)
+    {
+        realIndex = blockQueue.Index + i;
+        if (realIndex >= blockQueue.Length)
+        {
+            realIndex = 0;
+        }
+        Block *blockPtr = &(blockQueue.Blocks[realIndex]);
+
+        blockQueue.Blocks[realIndex].Row = 5 * i;
+        updateBlock(&queueBoard, blockPtr);
+    }
 }
 
 int *updateGame(long time, int moveRight, int moveDown, int rotate)
@@ -30,7 +73,7 @@ int *updateGame(long time, int moveRight, int moveDown, int rotate)
     Block *blockPtr = &block;
     clearBlock(boardPtr, blockPtr);
 
-    if(checkGameOver(boardPtr))
+    if (checkGameOver(boardPtr))
     {
         score[2] = 1;
         return (int *)(boardPtr->Cells);
@@ -65,10 +108,7 @@ int *updateGame(long time, int moveRight, int moveDown, int rotate)
             blockPtr->UnmovedTime += delta;
             if (blockPtr->UnmovedTime > 1000)
             {
-                // new block
-                updateBlock(boardPtr, blockPtr);
-                score[0] += checkRows(boardPtr);
-                randBlock(blockPtr);
+                blockSet();
             }
         }
     }
